@@ -1,0 +1,10 @@
+{
+  "name": "topos-client",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "dev-coding-for-fun <dserink@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@firebase/firestore": "^3.5.0"
+  }
+}

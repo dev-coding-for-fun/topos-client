@@ -1,0 +1,8 @@
+{
+    "name": "Topos Client",
+    "short_name": "ToposClient",
+    "start_url": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#B71C1C"
+  }

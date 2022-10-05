@@ -1,9 +1,8 @@
 runtime: python310
-threadsafe: true
 
 handlers:
 - url: /
-  static_files: www/index.html
+  static_files: index.html
   upload: www/index.html
 
 - url: /(.*)

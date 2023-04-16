@@ -8,13 +8,16 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "fmt": "prettier --write scripts/* styles/*",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "npm run build-base && cd functions && npm run build",
+    "build-base": "tsc && vite build",
+    "build:watch": "tsc && vite build --watch",
     "preview": "vite preview"
   },
   "dependencies": {
     "@firebase/firestore": "^3.5.0",
     "@types/firebase": "^3.2.1",
     "firebase": "^9.19.1",
+    "firebase-functions": "^4.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.10.0"

@@ -1,14 +1,10 @@
-// Import the functions you need from the SDKs you need
-/*
-import { Firebase, auth } from "./config/firebase"
-import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
-import { connectAuthEmulator } from "firebase/auth";
-*/
+import RouteIssueForm from "./RouteIssueForm";
 
 export default function App() {
   return(
     <div>
-      <span>Hello World</span>
+      <h1>Submit Route Issue</h1>
+      <RouteIssueForm />
     </div>
   );
 }

@@ -4,5 +4,13 @@ service cloud.firestore {
     match /{document=**} {
       allow read;
     }
+    // Allow anyone to write to the "issues" collection
+    match /issues/{documentId} {
+      allow create;
+      allow read: if false;
+      allow update, delete: if false;
+    }
   }
+
+
 }

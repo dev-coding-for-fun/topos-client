@@ -23,11 +23,13 @@
     "@types/firebase": "^3.2.1",
     "firebase": "^9.19.1",
     "firebase-functions": "^4.3.0",
+    "he": "^1.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.10.0"
   },
   "devDependencies": {
+    "@types/he": "^1.2.0",
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
     "eslint": "^8.24.0",

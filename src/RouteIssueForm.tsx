@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from './config/firebase';
 import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { Button, Stack, Box, Select, SelectChangeEvent, TextField, InputLabel, MenuItem, FormControl } from '@mui/material';
-import { styled } from '@mui/material/styles'
+import he from "he";
 
 
 interface Crag {
@@ -41,7 +41,10 @@ const RouteIssueForm: React.FC = () => {
   useEffect(() => {
     const fetchCrags = async () => {
       const cragsCollection = await getDocs(collection(db, 'crags'));
-      const cragsData = cragsCollection.docs.map((doc) => doc.data()) as Crag[];
+      const cragsData: Crag[] = cragsCollection.docs.map((doc) => ({
+        crag_id: doc.data().crag_id,
+        crag_name: he.decode(doc.data().crag_name),
+      }));
       setCrags(cragsData);
     };
     fetchCrags();
@@ -53,7 +56,11 @@ const RouteIssueForm: React.FC = () => {
         const sectorsRef = collection(db, "sectors");
         const q = query(sectorsRef, where("crag_id", "==", parseInt(selectedCrag)));
         const sectorsSnapshot = await getDocs(q);
-        const sectorsData = sectorsSnapshot.docs.map((doc) => doc.data()) as Sector[];
+        const sectorsData: Sector[] = sectorsSnapshot.docs.map((doc) => ({
+          sector_id: doc.data().sector_id,
+          sector_name: he.decode(doc.data().sector_name),
+          crag_id: doc.data().crag_id,
+        }));
         setSectors(sectorsData);
       }
     };
@@ -64,7 +71,11 @@ const RouteIssueForm: React.FC = () => {
     const fetchRoutes = async () => {
       if (selectedSector) {
         const routesCollection = await getDocs(query(collection(db, 'routes'), where('sector_id', '==', parseInt(selectedSector))));
-        const routesData = routesCollection.docs.map((doc) => doc.data()) as Route[];
+        const routesData: Route[] = routesCollection.docs.map((doc) => ({
+          route_id: doc.data().route_id,
+          route_name: he.decode(doc.data().route_name),
+          sector_id: doc.data().sector_id,
+        }));
         setRoutes(routesData);
       }
     };

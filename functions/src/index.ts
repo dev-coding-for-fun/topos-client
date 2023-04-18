@@ -71,7 +71,7 @@ export const writeRoutes = functions.https.onRequest(async (request, response) =
     response.status(200).send("Data successfully written to Firestore");
   } catch (error) {
     functions.logger.error(error);
-    response.status(500).send("An error occurred while processing the data");
+    response.status(500).send("An error occurred while processing the data:" + error);
   }
 });
 

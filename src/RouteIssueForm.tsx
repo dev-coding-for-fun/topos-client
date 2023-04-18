@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config/firebase';
 import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { Button, Stack, Box, Select, SelectChangeEvent, TextField, InputLabel, MenuItem, FormControl } from '@mui/material';
+import { styled } from '@mui/material/styles'
+
 
 interface Crag {
   crag_name: string;
@@ -47,8 +50,10 @@ const RouteIssueForm: React.FC = () => {
   useEffect(() => {
     const fetchSectors = async () => {
       if (selectedCrag) {
-        const sectorsCollection = await getDocs(query(collection(db, 'sectors'), where('crag_id', '==', selectedCrag)));
-        const sectorsData = sectorsCollection.docs.map((doc) => doc.data()) as Sector[];
+        const sectorsRef = collection(db, "sectors");
+        const q = query(sectorsRef, where("crag_id", "==", parseInt(selectedCrag)));
+        const sectorsSnapshot = await getDocs(q);
+        const sectorsData = sectorsSnapshot.docs.map((doc) => doc.data()) as Sector[];
         setSectors(sectorsData);
       }
     };
@@ -58,7 +63,7 @@ const RouteIssueForm: React.FC = () => {
   useEffect(() => {
     const fetchRoutes = async () => {
       if (selectedSector) {
-        const routesCollection = await getDocs(query(collection(db, 'routes'), where('sector_id', '==', selectedSector)));
+        const routesCollection = await getDocs(query(collection(db, 'routes'), where('sector_id', '==', parseInt(selectedSector))));
         const routesData = routesCollection.docs.map((doc) => doc.data()) as Route[];
         setRoutes(routesData);
       }
@@ -66,18 +71,18 @@ const RouteIssueForm: React.FC = () => {
     fetchRoutes();
   }, [selectedSector]);
 
-  const handleCragChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleCragChange = (event: SelectChangeEvent<typeof selectedCrag>) => {
     setSelectedCrag(event.target.value);
     setSelectedSector('');
     setSelectedRoute('');
   };
 
-  const handleSectorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSectorChange = (event: SelectChangeEvent<typeof selectedSector>) => {
     setSelectedSector(event.target.value);
     setSelectedRoute('');
   };
 
-  const handleRouteChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleRouteChange = (event: SelectChangeEvent<typeof selectedRoute>) => {
     setSelectedRoute(event.target.value);
   };
 
@@ -101,53 +106,52 @@ const RouteIssueForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Crag:
-        <select value={selectedCrag} onChange={handleCragChange}>
-          <option value="">Select a crag</option>
-          {crags.map((crag) => (
-            <option key={crag.crag_id} value={crag.crag_id}>
-              {crag.crag_name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <br />
-      <label>
-        Sector:
-        <select value={selectedSector} onChange={handleSectorChange} disabled={!selectedCrag}>
-          <option value="">Select a sector</option>
-          {sectors.map((sector) => (
-            <option key={sector.sector_id} value={sector.sector_id}>
-              {sector.sector_name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <br />
-      <label>
-        Route:
-        <select value={selectedRoute} onChange={handleRouteChange} disabled={!selectedSector}>
-          <option value="">Select a route</option>
-          {routes.map((route) => (
-            <option key={route.route_id} value={route.route_id}>
-              {route.route_name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <br />
-      <label>
-        Problem Description:
-        <br />
-        <textarea value={description} onChange={handleDescriptionChange} />
-      </label>
-      <br />
-      <button type="submit" disabled={!selectedRoute}>
-        Submit Issue
-      </button>
-    </form>
+    <React.Fragment>
+      <form onSubmit={handleSubmit}>
+        <Box sx={{ m: 2, width: '100%' }}>
+          <Stack spacing={0}>
+            <FormControl sx={{ m: 1, minWidth: 120, maxWidth: 360 }}>
+              <InputLabel id="crag-label">Crag</InputLabel>
+              <Select labelId="crag-label" label="Crag" value={selectedCrag} onChange={handleCragChange}>
+                {crags.map((crag) => (
+                  <MenuItem key={crag.crag_id} value={crag.crag_id}>
+                    {crag.crag_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl sx={{ m: 1, minWidth: 120, maxWidth: 360 }}>
+              <InputLabel id="sector-label">Sector</InputLabel>
+              <Select labelId="sector-label" value={selectedSector} onChange={handleSectorChange} disabled={!selectedCrag}>
+                {sectors.map((sector) => (
+                  <MenuItem key={sector.sector_id} value={sector.sector_id}>
+                    {sector.sector_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl sx={{ m: 1, minWidth: 120, maxWidth: 360 }}>
+              <InputLabel id="route-label">Route</InputLabel>
+              <Select labelId="route-label" value={selectedRoute} onChange={handleRouteChange} disabled={!selectedSector}>
+                {routes.map((route) => (
+                  <MenuItem key={route.route_id} value={route.route_id}>
+                    {route.route_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl sx={{ m: 1, minWidth: 200, maxWidth: '80%' }}>
+              <TextField label="Issue Description" placeholder="3rd bolt is loose" multiline rows={4} maxRows={10} value={description} onChange={handleDescriptionChange} />
+            </FormControl>
+            <FormControl sx={{ m:1, maxWidth: 200 }}>
+              <Button variant="contained" type="submit" disabled={!selectedRoute}>
+                Submit Issue
+              </Button>
+            </FormControl>
+          </Stack>
+        </Box>
+      </form>
+    </React.Fragment>
   );
 };
 
